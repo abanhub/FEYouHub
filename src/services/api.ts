@@ -108,8 +108,11 @@ const API_BASE = `${API_ORIGIN}${API_BASE_PATH}`;
 // --- KẾT THÚC PHẦN THAY ĐỔI ---
 
 async function http<T>(path: string, body: unknown, { hl, gl }: FetchOptions = {}): Promise<T> {
-  const baseUrl = 'https://youtubei-proxy.bangngo1509a.workers.dev/youtubei/v1'
+  const baseUrl = 'https://youtubei-proxy.bangngo1509a.workers.dev/youtubei/v1/'
   const url = new URL(path, baseUrl);
+  console.log(path)
+  console.log(baseUrl)
+  console.log(url.toString())
   if (hl) url.searchParams.set('hl', hl);
   if (gl) url.searchParams.set('gl', gl);
 
