@@ -98,10 +98,18 @@ type FetchOptions = {
   gl?: string;
 };
 
-const API_BASE = '/youtubei/v1';
+const { VITE_API_ORIGIN, VITE_API_BASE_PATH } = import.meta.env;
+
+const fallbackOrigin =
+  typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'http://localhost';
+
+const API_ORIGIN = (VITE_API_ORIGIN || fallbackOrigin).replace(/\/+$/, '');
+const API_BASE_PATH = `/${(VITE_API_BASE_PATH || 'youtubei/v1').replace(/^\/+/, '')}`;
+const API_BASE = `${API_ORIGIN}${API_BASE_PATH}`;
 
 async function http<T>(path: string, body: unknown, { hl, gl }: FetchOptions = {}): Promise<T> {
-  const url = new URL(`${API_BASE}/${path}`, window.location.origin);
+  const baseUrl = API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`;
+  const url = new URL(path, baseUrl);
   if (hl) url.searchParams.set('hl', hl);
   if (gl) url.searchParams.set('gl', gl);
 
