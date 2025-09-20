@@ -11,7 +11,7 @@ const SafeModeContext = createContext<SafeModeContextType | undefined>(undefined
 export const SafeModeProvider = ({ children }: { children: React.ReactNode }) => {
   const [safeMode, setSafeMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("safe-mode");
-    return saved ? saved === "1" : true;
+    return saved ? saved === "1" : false;
   });
 
   useEffect(() => {
@@ -31,4 +31,3 @@ export const useSafeMode = () => {
   if (!ctx) throw new Error("useSafeMode must be used within SafeModeProvider");
   return ctx;
 };
-
