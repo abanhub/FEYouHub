@@ -101,7 +101,7 @@ type FetchOptions = {
 const { VITE_API_ORIGIN, VITE_API_BASE_PATH } = import.meta.env;
 
 const fallbackOrigin =
-  typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'http://localhost';
+  typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://youtubei-proxy.bangngo1509a.workers.dev';
 
 const API_ORIGIN = (VITE_API_ORIGIN || fallbackOrigin).replace(/\/+$/, '');
 const API_BASE_PATH = `/${(VITE_API_BASE_PATH || 'youtubei/v1').replace(/^\/+/, '')}`;
