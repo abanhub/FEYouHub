@@ -1,0 +1,9 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+	<title>favicon_32x32</title>
+	<defs>
+		<image  width="32" height="32" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAAXNSR0IB2cksfwAAAKJQTFRF//////z4/9+s/8x6/8Ba/7hE/7M3/68s/6of/6QQ/6QP/6MO/54A/6QR/+3Q/6og//z2/6kc/6ke//z3/92m/96p/8lx/8dt/7lH/7lI/6YW/8Rj/54C/7Av/6cY/+zO/7U+/6gZ/6MM/9+r/6sh/6MN//34/9GH//bo/8Ri/7pK/8t2/9yk/96o/6kd/8x4/79Y/7dD/7I1/64q/64r/8BZEjhtxQAAAL9JREFUeJzNk0sLgkAUhe/BMqISA4seoFQQLfz//6RtuKqICrOISHNyKnA0urNo49ndO99wH3MGpBGqAUDRKyeEEYuPMsDC4+f1xIxgI2YKmIBzY1toon9lgRYGFxbooFHPIwsIS0AX7jGPjJOHfRHoYbpTAaIZtiowRJuKAM2RbpTcN0C0wDn8ByiX0DapHVO7KM2qXd1jefADFpjAdlfMeWYY1nJmEknTOiPp1yUwfm9ImtVPRe2+Tg9V+Vm8nlRfQQQx8NbPAAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+	</style>
+	<use id="Background" href="#img1" x="0" y="0"/>
+</svg>

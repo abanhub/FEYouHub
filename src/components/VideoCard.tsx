@@ -1,7 +1,9 @@
-import { Play, Eye, Clock, Heart, Share2 } from "lucide-react";
+import { Play, Eye, Clock, Heart, Share2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import SafeImage from "@/components/SafeImage";
+import { useNavigate } from "react-router-dom";
 interface VideoCardProps {
+  id: string
   title: string;
   channel: string;
   views: string;
@@ -11,20 +13,19 @@ interface VideoCardProps {
   verified?: boolean;
   rating?: number;
 }
-
-const VideoCard = ({ title, channel, views, duration, timeAgo, thumbnail, verified = false, rating }: VideoCardProps) => {
+const VideoCard = ({id, title, channel, views, duration, timeAgo, thumbnail, verified = false, rating }: VideoCardProps) => {
+  const navigate = useNavigate();
   return (
-    <div className="group cursor-pointer">
+    <div className="group cursor-pointer h-full">
       <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-3 hover:bg-gray-800 transition-all duration-300 border border-gray-800 hover:border-brand-orange">
-        <div className="aspect-video bg-gradient-to-br from-gray-800 to-black flex items-center justify-center relative overflow-hidden">
-          <img 
-            src={thumbnail} 
+        <div className="aspect-video bg-gradient-to-br from-gray-800 to-black flex items-center justify-center relative overflow-hidden"
+                                    onClick={() => {
+                              if (id) navigate(`/v/${id}`);
+                            }}>
+          <SafeImage
+            src={thumbnail}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              e.currentTarget.parentElement!.querySelector('.fallback')!.classList.remove('hidden');
-            }}
+            className="transition-transform duration-300 group-hover:scale-105"
           />
           <div className="fallback hidden absolute inset-0 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
             <Play className="h-16 w-16 text-white/40" />
@@ -40,8 +41,8 @@ const VideoCard = ({ title, channel, views, duration, timeAgo, thumbnail, verifi
             HD
           </div>
           
-          {/* Play button overlay */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+          {/* Play button overlay (hidden until hover) */}
+          <div className="absolute inset-0 z-10 bg-black/0 group-hover:bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center pointer-events-none">
             <div className="transform scale-75 group-hover:scale-100 transition-transform duration-300">
               <div className="w-16 h-16 bg-brand-orange/90 rounded-full flex items-center justify-center">
                 <Play className="h-8 w-8 text-black ml-1" fill="currentColor" />
@@ -57,11 +58,14 @@ const VideoCard = ({ title, channel, views, duration, timeAgo, thumbnail, verifi
             <Button size="sm" variant="ghost" className="h-8 w-8 p-0 bg-black/60 hover:bg-black/80">
               <Share2 className="h-4 w-4 text-white" />
             </Button>
+            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 bg-black/60 hover:bg-black/80">
+              <MoreHorizontal className="h-4 w-4 text-white" />
+            </Button>
           </div>
         </div>
         
         <div className="p-4">
-          <h3 className="text-white font-medium text-sm leading-tight mb-2 line-clamp-2 group-hover:text-brand-orange transition-colors">
+          <h3 className="text-white font-medium text-sm leading-tight mb-2 line-clamp-2 group-hover:text-brand-orange transition-colors min-h-[2.5rem]">
             {title}
           </h3>
           

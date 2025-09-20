@@ -1,139 +1,165 @@
+import { useCallback, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getBrowseFeed } from "@/services/api";
 import VideoCard from "./VideoCard";
+import VideoCardSkeleton from "./VideoCardSkeleton";
+import { useSkeletonTestMode } from "@/hooks/use-test-mode";
 
-// Placeholder thumbnail URL
-const placeholderThumbnail = "https://via.placeholder.com/320x180/1a1a1a/ff9000?text=Video+Thumbnail";
+const compact = (n: number | string | undefined) => {
+  if (n === undefined || n === null) return "0";
+  const num = typeof n === "string" ? Number(n) : n;
+  if (!isFinite(num)) return "0";
+  return Intl.NumberFormat(undefined, { notation: "compact" }).format(num);
+};
 
-const sampleVideos = [
-  {
-    title: "Amazing Content - Must Watch!",
-    channel: "TopCreator",
-    views: "1.2M",
-    duration: "15:23",
-    timeAgo: "2 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 95
-  },
-  {
-    title: "Premium Quality Experience",
-    channel: "PremiumStudio",
-    views: "856K",
-    duration: "12:45",
-    timeAgo: "1 week ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 92
-  },
-  {
-    title: "Latest Trending Content",
-    channel: "TrendMaster",
-    views: "2.1M",
-    duration: "18:30",
-    timeAgo: "3 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 88
-  },
-  {
-    title: "Exclusive Behind the Scenes",
-    channel: "ExclusiveContent",
-    views: "3.5M",
-    duration: "28:15",
-    timeAgo: "5 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 97
-  },
-  {
-    title: "Hot New Release",
-    channel: "NewReleases",
-    views: "987K",
-    duration: "20:11",
-    timeAgo: "1 day ago",
-    thumbnail: placeholderThumbnail,
-    verified: false,
-    rating: 89
-  },
-  {
-    title: "Popular Content Collection",
-    channel: "PopularChannel",
-    views: "4.2M",
-    duration: "60:00",
-    timeAgo: "2 weeks ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 94
-  },
-  {
-    title: "Interactive Experience",
-    channel: "InteractiveStudio",
-    views: "1.8M",
-    duration: "22:33",
-    timeAgo: "4 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 91
-  },
-  {
-    title: "Creative Artistic Content",
-    channel: "ArtisticCreators",
-    views: "645K",
-    duration: "35:42",
-    timeAgo: "1 week ago",
-    thumbnail: placeholderThumbnail,
-    verified: false,
-    rating: 86
-  },
-  {
-    title: "Professional Quality Production",
-    channel: "ProStudio",
-    views: "2.7M",
-    duration: "45:18",
-    timeAgo: "3 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 96
-  },
-  {
-    title: "Fresh New Perspective",
-    channel: "FreshContent",
-    views: "1.4M",
-    duration: "8:24",
-    timeAgo: "6 days ago",
-    thumbnail: placeholderThumbnail,
-    verified: false,
-    rating: 87
-  },
-  {
-    title: "High Definition Experience",
-    channel: "HDMasters",
-    views: "892K",
-    duration: "32:17",
-    timeAgo: "1 week ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 93
-  },
-  {
-    title: "Trending Now - Don't Miss",
-    channel: "TrendingNow",
-    views: "5.1M",
-    duration: "12:08",
-    timeAgo: "2 hours ago",
-    thumbnail: placeholderThumbnail,
-    verified: true,
-    rating: 98
-  }
-];
+const timeAgo = (iso?: string) => {
+  if (!iso) return "";
+  const then = new Date(iso).getTime();
+  if (isNaN(then)) return "";
+  const now = Date.now();
+  const diff = Math.max(0, now - then);
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
+  const years = Math.floor(months / 12);
+  return `${years} year${years > 1 ? "s" : ""} ago`;
+};
 
-const VideoGrid = () => {
+type Props = {
+  browseId: string;
+  regionOverride?: string;
+};
+
+const VideoGrid = ({ browseId, regionOverride }: Props) => {
+  const [params] = useSearchParams();
+  const queryRegion = params.get("region") || undefined;
+  const region = regionOverride ?? queryRegion;
+
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["videos", browseId, region],
+    queryFn: async ({ pageParam }) => {
+      const res = await getBrowseFeed(browseId, { region, continuation: pageParam });
+      return res;
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.continuation || undefined,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
+
+  const testSkeleton = useSkeletonTestMode();
+
+  const manuallyLoadMore = useCallback(() => {
+    if (!hasNextPage || isFetchingNextPage) {
+      // eslint-disable-next-line no-console
+      console.log('[home] manual load more ignored', { hasNextPage, isFetchingNextPage });
+      return;
+    }
+    const nextToken = data?.pages?.[data.pages.length - 1]?.continuation;
+    // eslint-disable-next-line no-console
+    console.log('[home] manual load more click', {
+      continuation: nextToken ?? null,
+      pagesLoaded: data?.pages?.length ?? 0,
+    });
+    fetchNextPage().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('[home] manual load more failed', err);
+    });
+  }, [data?.pages, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    const logHeight = () => {
+      const pageHeight = document.documentElement.scrollHeight;
+      // eslint-disable-next-line no-console
+      console.log('[home] page height', pageHeight);
+    };
+    logHeight();
+    window.addEventListener('resize', logHeight);
+    window.addEventListener('load', logHeight);
+    const observer = new MutationObserver(() => logHeight());
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      window.removeEventListener('resize', logHeight);
+      window.removeEventListener('load', logHeight);
+      observer.disconnect();
+    };
+  }, []);
+
+  const videos = useMemo(
+    () =>
+      (data?.pages || [])
+        .flatMap((page) => page.items)
+        .filter((item) => item && item.id),
+    [data?.pages]
+  );
+
+  const expectedSkeletons = data?.pages?.[0]?.items?.length ?? 12;
+  const initialPending = (!videos.length && isLoading) || testSkeleton;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-        {sampleVideos.map((video, index) => (
-          <VideoCard key={index} {...video} />
-        ))}
-      </div>
+      {initialPending && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: expectedSkeletons }).map((_, i) => (
+            <VideoCardSkeleton key={`skel-${i}`} />
+          ))}
+        </div>
+      )}
+      {!initialPending && isError && (
+        <div className="text-sm text-red-400">Failed to load videos.</div>
+      )}
+      {!initialPending && !isError && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {(videos || []).map((v, idx) => (
+            <VideoCard
+              id={v.id}
+              key={`${v.id}-${idx}`}
+              title={v.title}
+              channel={v.channel?.name || ""}
+              views={compact(v.view_count)}
+              duration={v.length_text || ""}
+              timeAgo={timeAgo(v.upload_date)}
+              thumbnail={v.thumbnail}
+              verified={Boolean(v.channel?.badges?.includes?.('VERIFIED'))}
+            />
+          ))}
+        </div>
+      )}
+      {!initialPending && isFetchingNextPage && (
+        <div className="mt-6 flex justify-center text-sm text-zinc-400">Loading more…</div>
+      )}
+      {!initialPending && (
+        <div className="mt-6 flex justify-center">
+          <button
+            type="button"
+            onClick={manuallyLoadMore}
+            disabled={!hasNextPage || isFetchingNextPage}
+            className="px-4 py-2 rounded-md bg-brand-orange hover:bg-brand-orange-hover text-black font-semibold disabled:opacity-70"
+          >
+            {hasNextPage
+              ? isFetchingNextPage
+                ? 'Loading…'
+                : 'Load more videos'
+              : 'No more videos'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

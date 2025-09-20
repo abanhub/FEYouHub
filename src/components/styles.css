@@ -1,0 +1,94 @@
+/* Refactor of components/styles.min.css (scoped for header only) */
+
+#header .legacy-nav-link {
+  color: #cfcfcf;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+#header .legacy-nav-link:hover { color: #ff9900; }
+#header .legacy-nav-link.active { color: #ffffff; }
+
+/* PH-like second row nav */
+.ph-nav-link { position: relative; padding-bottom: 10px; color: #a1a1aa; font-weight: 700; }
+.ph-nav-link:hover { color: #ffffff; }
+.ph-nav-link.active { color: #ffffff; }
+.ph-nav-link.active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #ff9900;
+}
+
+/* Search pill look */
+.ph-search { box-shadow: inset 0 0 0 1px rgba(63,63,70,.6); }
+
+/* Footer */
+.ph-footer-title { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; font-size: 12px; }
+.ph-footer-links li { margin: 6px 0; }
+.ph-footer-links a { color: #a1a1aa; }
+.ph-footer-links a:hover { color: #fff; }
+.ph-footer-contact { border-radius: 10px; }
+
+.header-hamb-btn { display: inline-flex; align-items: center; justify-content: center; height: 36px; width: 36px; }
+
+/* Cookie banner compatibility */
+.cookie-banner { backdrop-filter: blur(6px); }
+
+/* Global Cookie Banner (refactor from HTML) */
+.globalCookieBanner {
+  background: rgba(0,0,0,.85);
+  border: 1px solid #3f3f46; /* zinc-700 */
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.6);
+}
+.globalCookieBanner__wrapper { display: flex; align-items: center; gap: 12px; padding: 14px; }
+.globalCookieBanner__icon { flex: 0 0 auto; height: 32px; width: 32px; border-radius: 6px; }
+.bg-cookie { background: radial-gradient(circle at 30% 30%, #a16207 0 8px, transparent 8px),
+                       radial-gradient(circle at 65% 45%, #a16207 0 6px, transparent 6px),
+                       radial-gradient(circle at 55% 75%, #a16207 0 7px, transparent 7px),
+                       #f59e0b; }
+.globalCookieBanner__content { color: #e5e5e5; font-size: 14px; line-height: 1.35; position: relative; }
+.globalCookieBanner__content a { color: #ff9900; text-decoration: underline; }
+.globalCookieBanner__close { position: absolute; right: -6px; top: -6px; height: 24px; width: 24px; display: inline-flex; align-items: center; justify-content: center; color: #a1a1aa; }
+.globalCookieBanner__buttons { margin-left: auto; display: flex; gap: 10px; }
+.buttonBase { padding: 8px 12px; border-radius: 6px; border: 1px solid #3f3f46; background: #18181b; color: #fff; font-weight: 600; }
+.buttonBase:hover { background: #27272a; }
+.buttonBase.js-acceptGlobalCookies { background: #ff9900; border-color: #ff9900; color: #000; }
+.buttonBase.js-acceptGlobalCookies:hover { background: #ff9900; }
+
+/* Network bar (refactor from network_bar.html) */
+.networkBar .networkTab { color: #a3a3a3; }
+.networkBar .networkTab:hover { color: #ffffff; }
+.networkBar .dropdown { position: absolute; margin-top: 10px; background: #0b0b0b; border: 1px solid #27272a; border-radius: 6px; padding: 8px; display: grid; grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 6px; }
+.networkBar .dropdown.hide { display: none; }
+.networkBar .dropdown li { list-style: none; }
+.networkBar .dropdown a { display: block; padding: 6px 10px; border-radius: 4px; color: #e5e5e5; white-space: nowrap; }
+.networkBar .dropdown a:hover { background: #1a1a1a; color: #ff9900; }
+.networkBar .dropdownTrigger { position: relative; }
+
+/* Misc: legacy sprite/background resets (from misc.html) */
+.bg-sprite-icons,
+.bg-sprite-icons-before::before,
+.bg-private-unlocked,
+.bg-sprite-icons-profile,
+.bg-sprite-playlist,
+.bg-sprite-new-nav,
+.bg-sprite-flags,
+.bg-country-flags,
+.bg-model-thumb-overlay,
+.pb-block-sprite-bg,
+.pb-block-trailer-paid-bg,
+.pb-block-trailer-fan-bg,
+.bg-premium-sprite,
+.bg-video-sprite,
+.bg-fanclub,
+.bg-verified-badge,
+.bg-premium-thumb-icon,
+.bg-private-locked,
+.bg-premium-star,
+.bg-language-icon,
+.bg-legacy-opacity {
+  background: none !important;
+  background-image: none !important;
+}
+
+/* Language dropdown */
+.lang-dropdown { backdrop-filter: blur(4px); }

@@ -18,7 +18,7 @@ All colors MUST be HSL.
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 25 100% 50%;
+    --primary: 36 100% 50%;
     --primary-foreground: 0 0% 0%;
 
     --secondary: 0 0% 10%;
@@ -27,7 +27,7 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 25 100% 50%;
+    --accent: 36 100% 50%;
     --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
@@ -35,26 +35,26 @@ All colors MUST be HSL.
 
     --border: 0 0% 20%;
     --input: 0 0% 10%;
-    --ring: 25 100% 50%;
+    --ring: 36 100% 50%;
 
     /* PornHub-specific brand colors */
-    --brand-orange: 25 100% 50%; /* Classic PornHub orange */
-    --brand-orange-hover: 25 100% 45%;
+    --brand-orange: 36 100% 50%; /* #f90 */
+    --brand-orange-hover: 36 100% 45%;
     --video-card: 0 0% 7%;
     --video-card-hover: 0 0% 10%;
     --category-pill: 0 0% 15%;
-    --category-pill-active: 25 100% 50%;
+    --category-pill-active: 36 100% 50%;
     
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary: 36 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 25 100% 50%;
+    --sidebar-ring: 36 100% 50%;
   }
 
   .dark {
@@ -67,7 +67,7 @@ All colors MUST be HSL.
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 25 100% 50%;
+    --primary: 36 100% 50%;
     --primary-foreground: 0 0% 0%;
 
     --secondary: 0 0% 10%;
@@ -76,7 +76,7 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 25 100% 50%;
+    --accent: 36 100% 50%;
     --accent-foreground: 0 0% 0%;
 
     --destructive: 0 62.8% 50%;
@@ -84,16 +84,16 @@ All colors MUST be HSL.
 
     --border: 0 0% 20%;
     --input: 0 0% 10%;
-    --ring: 25 100% 50%;
+    --ring: 36 100% 50%;
     
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary: 36 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 25 100% 50%;
+    --sidebar-ring: 36 100% 50%;
   }
 }
 
@@ -118,28 +118,51 @@ All colors MUST be HSL.
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgb(255, 144, 0);
+    background: hsl(var(--brand-orange));
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgb(255, 165, 0);
+    background: hsl(36 100% 60%);
   }
 
   /* Text selection styling */
   ::selection {
-    background: rgba(255, 144, 0, 0.3);
+    background: hsl(var(--brand-orange) / 0.3);
     color: white;
   }
 
   /* Focus states */
   .focus-visible:focus {
-    outline: 2px solid rgb(255, 144, 0);
+    outline: 2px solid hsl(var(--brand-orange));
     outline-offset: 2px;
   }
 }
 
 @layer utilities {
+  /* Orange shimmer skeleton for loading states */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--brand-orange) / 0.18),
+      transparent
+    );
+    animation: skeleton-shimmer 1.2s infinite;
+  }
+  @keyframes skeleton-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -148,7 +171,7 @@ All colors MUST be HSL.
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, rgb(255, 144, 0), rgb(255, 165, 0));
+    background: linear-gradient(135deg, hsl(var(--brand-orange)), hsl(36 100% 60%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -157,6 +180,6 @@ All colors MUST be HSL.
   .glass-effect {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 144, 0, 0.1);
+    border: 1px solid hsl(var(--brand-orange) / 0.1);
   }
 }

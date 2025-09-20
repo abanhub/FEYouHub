@@ -71,3 +71,30 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Local development (web + proxy server)
+
+- Install deps: `npm i`
+- Run both web and API proxy: `npm run dev:full`
+  - Web (Vite) at `http://localhost:8080`
+  - Proxy/API server at `http://localhost:3001`
+- Or run separately: `npm run dev` and `npm run server`
+
+### Environment variables
+
+Create `.env` (or copy `.env.example`):
+
+- `INVIDIOUS_BASE` — Invidious instance (default: `https://yewtu.be`)
+- `PORT` — API proxy port (default: `3001`)
+- `ALLOWED_ORIGINS` — CORS allowlist (comma‑separated, default: `http://localhost:8080`)
+
+### Troubleshooting
+
+- Alias `@` not resolving: restart Vite after editing `vite.config.ts`; we also enable `vite-tsconfig-paths`.
+- OneDrive/encoding issues: ensure files are saved as UTF‑8.
+- CORS issues: confirm requests are sent via `http://localhost:8080`, not file:// or another port; check server logs.
+
+### Notes
+
+- The proxy adds rate limiting and CORS allowlist.
+- For production, consider moving youtubei.js calls fully server‑side to avoid client CORS/fingerprinting.

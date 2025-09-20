@@ -1,0 +1,40 @@
+import Innertube, { UniversalCache } from 'youtubei.js'
+
+// Singleton
+let ytPromise: Promise<Innertube> | null = null;
+
+/**
+ * fetch đã "bind" đúng & rewrite URL sang đường proxy /yt/*
+ * để đi qua Vite proxy, tránh CORS.
+ */
+function makeProxiedFetch() {
+  const bound = window.fetch.bind(window);
+  return (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = typeof input === 'string' ? input : (input as URL).toString();
+    // Đổi domain youtube -> cùng origin /yt/...
+    const proxied = url.replace(/^https:\/\/www\.youtube\.com\//, '/yt/');
+    return bound(proxied, init);
+  };
+}
+
+/** Khởi tạo 1 lần cho trình duyệt */
+export async function initYTBrowser() {
+  if (!ytPromise) {
+    ytPromise = Innertube.create({
+      lang: import.meta.env.VITE_YT_LANG || 'vi',
+      location: import.meta.env.VITE_YT_REGION || 'VN',
+      retrieve_player: false,
+      generate_session_locally: true,
+      cache: new UniversalCache(true),
+      // @ts-ignore - youtubei.js chấp nhận custom fetch
+      fetch: makeProxiedFetch(),
+    });
+  }
+  return ytPromise;
+}
+
+// Utils nhỏ
+const asText = (v: any) => (typeof v === 'string' ? v : v?.toString?.() ?? v?.text ?? null);
+
+async function openComments(yt: Innertube, info: any, videoId: string) {
+  if (info && typeof (info as any).getComments === 'function') {
