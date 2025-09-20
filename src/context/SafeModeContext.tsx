@@ -11,7 +11,11 @@ const SafeModeContext = createContext<SafeModeContextType | undefined>(undefined
 export const SafeModeProvider = ({ children }: { children: React.ReactNode }) => {
   const [safeMode, setSafeMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("safe-mode");
-    return saved ? saved === "1" : false;
+    if (saved === null) {
+      localStorage.setItem("safe-mode", "0");
+      return false;
+    }
+    return saved === "1";
   });
 
   useEffect(() => {
