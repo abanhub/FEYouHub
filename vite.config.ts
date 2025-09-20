@@ -12,8 +12,13 @@ export default defineConfig(({ mode }) => {
   const invidiousBase = env.VITE_INVIDIOUS_BASE || 'https://yewtu.be';
   const DEV_HOST = env.DEV_HOST || '::';
   const DEV_PORT = Number(env.DEV_PORT || 8080);
-  const API_HOST = env.API_HOST || 'localhost';
-  const API_PORT = Number(env.API_PORT || 3000);
+  const DEFAULT_API_ORIGIN = 'https://youtubei-proxy.bangngo1509a.workers.dev';
+  const API_ORIGIN = (env.VITE_API_ORIGIN?.trim() || DEFAULT_API_ORIGIN).replace(/\/+$/, '');
+  const createProxyTarget = () => ({
+    target: API_ORIGIN,
+    changeOrigin: true,
+    secure: true,
+  });
 
   // Resolve ESM-friendly __dirname
   const __filename = fileURLToPath(import.meta.url);
@@ -29,26 +34,10 @@ export default defineConfig(({ mode }) => {
         interval: 200,
       },
       proxy: {
-        '^/api/.*': {
-          target: `http://${API_HOST}:${API_PORT}`,
-          changeOrigin: true,
-          secure: false,
-        },
-        '^/yt/.*': {
-          target: `http://${API_HOST}:${API_PORT}`,
-          changeOrigin: true,
-          secure: false,
-        },
-        '^/yig/.*': {
-          target: `http://${API_HOST}:${API_PORT}`,
-          changeOrigin: true,
-          secure: false,
-        },
-        '^/youtubei/.*': {
-          target: `http://${API_HOST}:${API_PORT}`,
-          changeOrigin: true,
-          secure: false,
-        },
+        '^/api/.*': createProxyTarget(),
+        '^/yt/.*': createProxyTarget(),
+        '^/yig/.*': createProxyTarget(),
+        '^/youtubei/.*': createProxyTarget(),
       },
     },
     plugins: [
