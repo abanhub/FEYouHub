@@ -1,10 +1,10 @@
-import { useLocation } from "react-router-dom";
+﻿import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import NetworkBar from "@/components/NetworkBar";
-import WarningModal from "@/components/WarningModal";
-import LegacyHeader from "@/components/Header";
-import GlobalCookieBanner from "@/components/GlobalCookieBanner";
-import { Footer } from "react-day-picker";
+import NetworkBar from "@/features/layout/ui/NetworkBar";
+import WarningModal from "@/features/layout/ui/WarningModal";
+import LegacyHeader from "@/features/layout/ui/Header";
+import GlobalCookieBanner from "@/features/layout/ui/GlobalCookieBanner";
+import Footer from "@/features/layout/ui/Footer";
 
 const Channel = () => {
   const location = useLocation();

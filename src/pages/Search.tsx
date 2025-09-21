@@ -1,14 +1,17 @@
-import NetworkBar from "@/components/NetworkBar";
-import LegacyHeader from "@/components/Header";
-import Footer from "@/components/Footer";
-import SafeImage from "@/components/SafeImage";
+﻿import NetworkBar from "@/features/layout/ui/NetworkBar";
+import LegacyHeader from "@/features/layout/ui/Header";
+import Footer from "@/features/layout/ui/Footer";
+import SafeImage from "@/features/safe-mode/ui/SafeImage";
 import { Play, Eye, Clock } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getChannel, searchVideos, type ChannelInfo, type SearchItem } from "@/services/api";
-import { useSkeletonTestMode } from "@/hooks/use-test-mode";
-import { SearchResultSkeleton, ChannelPanelSkeleton } from "@/components/SearchSkeleton";
+import { getChannel, searchVideos, type SearchItem } from "@/shared/config/api";
+import type { ChannelInfo } from "@/entities/channel/types";
+
+type ChannelVideoSummary = NonNullable<ChannelInfo["videos"]>[number];
+import { useSkeletonTestMode } from "@/shared/lib/hooks/use-test-mode";
+import { SearchResultSkeleton, ChannelPanelSkeleton } from "@/features/search/ui/SearchSkeleton";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -120,10 +123,14 @@ const SearchPage = () => {
     staleTime: 10 * 60 * 1000,
   });
 
-  const channelThumbs = useMemo(
-    () => (channelInfo?.videos ?? []).filter((v: any) => v && typeof v.id === "string" && v.id.length > 0).slice(0, 9),
-    [channelInfo]
-  );
+  const channelThumbs = useMemo(() => {
+    const videos = channelInfo?.videos ?? [];
+    return videos
+      .filter((video): video is NonNullable<ChannelInfo["videos"]>[number] => {
+        return Boolean(video && typeof video.id === "string" && video.id.length > 0);
+      })
+      .slice(0, 9);
+  }, [channelInfo]);
 
   const displayChannel = useMemo(() => {
     if (!channelInfo && !primaryChannelResult) return undefined;
@@ -214,17 +221,17 @@ const SearchPage = () => {
               <div className="space-y-4">
                 {list.map((v, idx) => (
                   <div
-                    key={`${v.id}-${idx}`}
+                    key={`${video.id}-${idx}`}
                     className="group flex gap-4 p-2 rounded-lg hover:bg-zinc-900/40 transition-colors"
                     onClick={() => {
-                        if (v.id) navigate(`/v/${v.id}`);
+                        if (video.id) navigate(`/v/${video.id}`);
                       }}
                     >
                       <div className="w-44 shrink-0">
                         <div className="relative aspect-video rounded overflow-hidden border border-zinc-800">
                           <SafeImage
                             src={v.thumbnail}
-                            alt={v.title}
+                            alt={video.title}
                             className="transition-transform duration-300 group-hover:scale-105"
                           />
                           {/* Play overlay */}
@@ -239,7 +246,7 @@ const SearchPage = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-[15px] leading-snug mb-1 line-clamp-2 group-hover:text-brand-orange transition-colors min-h-[2.5rem]">
-                          {v.title}
+                          {video.title}
                         </div>
                         <div className="flex items-center justify-between text-xs text-zinc-400">
                           <div>{v.channel?.name || ""}</div>
@@ -278,7 +285,7 @@ const SearchPage = () => {
                       <div className="flex items-center gap-3 mb-3">
                         <img
                           onClick={() => {
-                            if (displayChannel && displayChannel.id) navigate(`/c/${displayChannel.id}`);
+                            if (displayChannel?.id) navigate(`/c/${displayChannel.id}`);
                           }}
                           src={displayChannel?.thumbnail || "https://i.pravatar.cc/80"}
                           alt={displayChannel?.name || ""}
@@ -316,15 +323,15 @@ const SearchPage = () => {
 
                     {channelThumbs.length > 0 && (
                       <div className="mt-4 grid grid-cols-3 gap-0">
-                        {channelThumbs.map((v: any, idx: number) => (
+                        {channelThumbs.map((video, idx) => (
                           <div
-                            key={`${v.id}-${idx}`}
+                            key={`${video.id}-${idx}`}
                             className="relative aspect-video overflow-hidden cursor-pointer"
                             onClick={() => {
-                              if (v.id) navigate(`/v/${v.id}`);
+                              if (video.id) navigate(`/v/${video.id}`);
                             }}
                           >
-                            <SafeImage src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" />
+                            <SafeImage src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
                           </div>
                         ))}
                       </div>
@@ -342,3 +349,12 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
+
+
+
+
+
+
+
+

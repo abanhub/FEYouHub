@@ -1,11 +1,11 @@
-import NetworkBar from "@/components/NetworkBar";
-import LegacyHeader from "@/components/Header";
-import VideoGrid from "@/components/VideoGrid";
-import GlobalCookieBanner from "@/components/GlobalCookieBanner";
+import NetworkBar from "@/features/layout/ui/NetworkBar";
+import LegacyHeader from "@/features/layout/ui/Header";
+import VideoGrid from "@/features/video/ui/VideoGrid";
+import GlobalCookieBanner from "@/features/layout/ui/GlobalCookieBanner";
 import { Info } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
-import Footer from "@/components/Footer";
-import WarningModal from "@/components/WarningModal";
+import { useLanguage } from "@/shared/lib/contexts/LanguageContext";
+import Footer from "@/features/layout/ui/Footer";
+import WarningModal from "@/features/layout/ui/WarningModal";
 import { useMemo, useState } from "react";
 
 

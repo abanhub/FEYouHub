@@ -1,14 +1,15 @@
-import NetworkBar from "@/components/NetworkBar";
-import LegacyHeader from "@/components/Header";
-import Footer from "@/components/Footer";
+﻿import NetworkBar from "@/features/layout/ui/NetworkBar";
+import LegacyHeader from "@/features/layout/ui/Header";
+import Footer from "@/features/layout/ui/Footer";
 import { useParams, useNavigate } from "react-router-dom";
-import CustomVideo from "@/components/CustomVideo";
-import UnderVideoMeta from "@/components/UnderVideoMeta";
-import NextVideo from "@/components/NextVideo";
-import Comment from "@/components/comment";
+import CustomVideo from "@/features/video/ui/CustomVideo";
+import UnderVideoMeta from "@/features/video/ui/UnderVideoMeta";
+import NextVideo from "@/features/video/ui/NextVideo";
+import Comment from "@/features/comments/ui/Comment";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getTrending, getVideoDetails, getVideoComments, type VideoDetails } from "@/services/api";
+import { getTrending, getVideoDetails, getVideoComments } from "@/shared/config/api";
+import type { VideoDetails } from "@/entities/video/types";
 
 const toNumericCount = (value?: number | string | null): number => {
   if (value === undefined || value === null) return 0;
@@ -75,11 +76,7 @@ const DemoView = () => {
         const details = await getVideoDetails(currentId);
         if (cancelled) return;
         setVideo(details);
-        // eslint-disable-next-line no-console
-        console.log("[api] video details", details);
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("[api] fetch video failed", e);
       }
     })();
     return () => {
@@ -97,19 +94,11 @@ const DemoView = () => {
         const entry = entries[0];
         if (!entry?.isIntersecting) return;
         if (commentsHasNextPage && !commentsFetchingNext) {
-          // eslint-disable-next-line no-console
-          console.log("[comments] auto-fetching more");
           fetchMoreComments().catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error("[comments] auto fetch failed", err);
           });
         }
         if (videosHasNextPage && !videosFetchingNext) {
-          // eslint-disable-next-line no-console
-          console.log("[videos] auto-fetching more");
           fetchMoreVideos().catch((err) => {
-            // eslint-disable-next-line no-console
-            console.error("[videos] auto fetch failed", err);
           });
         }
       },
@@ -123,21 +112,15 @@ const DemoView = () => {
     let triggered = false;
     if (commentsHasNextPage && !commentsFetchingNext) {
       fetchMoreComments().catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error("[comments] manual fetch failed", err);
       });
       triggered = true;
     }
     if (videosHasNextPage && !videosFetchingNext) {
       fetchMoreVideos().catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error("[videos] manual fetch failed", err);
       });
       triggered = true;
     }
     if (!triggered) {
-      // eslint-disable-next-line no-console
-      console.log("[demo] manual load ignored (no more content)");
     }
   };
 
@@ -162,10 +145,10 @@ const DemoView = () => {
   const hasAnyNextPage = commentsHasNextPage || videosHasNextPage;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-red text-red flex flex-col">
       <NetworkBar />
       <LegacyHeader />
-      <main className="flex-1">
+      <main className="flex-1 bg-base-100">
         <div className="max-w-[1600px] mx-auto px-4 py-6">
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(300px,1fr)] gap-6">
             <section className="space-y-6 ">
@@ -220,7 +203,7 @@ const DemoView = () => {
                   className="px-4 py-2 rounded-md border border-zinc-700 bg-zinc-900 text-sm text-zinc-200 hover:bg-zinc-800 disabled:opacity-60"
                 >
                   {commentsFetchingNext || videosFetchingNext
-                    ? "Loading more…"
+                    ? "Loading moreâ€¦"
                     : hasAnyNextPage
                       ? "Load more"
                       : "No more content"}
@@ -251,3 +234,4 @@ const DemoView = () => {
 };
 
 export default DemoView;
+
